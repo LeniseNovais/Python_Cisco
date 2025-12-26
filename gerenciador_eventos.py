@@ -76,4 +76,5 @@ def listar_eventos(eventos):
         
         data_formatada = data_hora_obj.strftime('%d/%m/%Y %H:%M')
         print(f'{i}. {evento['título']} - {data_formatada} {status}')
-        print('-' *40)
+        print('-' * 40)
+

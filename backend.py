@@ -9,7 +9,7 @@ from typing import Optional
 #Configurar url do SQL lite BASE
 DATABASE_URL = "sqlite:///./eventos.db"
 engine = create_engine(DATABASE_URL, echo=False, connect_args={"check_same_thread": False})
-Sessionlocal = sessionmaker(autocommit= False, autoflush= False, bind=engine)
+SessionLocal = sessionmaker(autocommit= False, autoflush= False, bind=engine)
 Base = declarative_base()
 
 #Criar modelo ORM
@@ -17,14 +17,14 @@ class Evento(Base):
     __tablename__ = 'eventos'
     id = Column(Integer, primary_key= True)
     nome = Column(String(255), nullable= False)
-    data_hora = Column(datetime, nullable= False)
+    data_hora = Column(DateTime, nullable= False)
 
 #Criar tudo no banco de dados
 Base.metadata.create_all(bind=engine)
 
 #Função de fechar sessão
 def get_db():
-    db = Sessionlocal()
+    db = SessionLocal()
     try:
         yield db #Comando de contexto do banco de dados
     finally:
@@ -91,7 +91,7 @@ app.add_middleware(
     allow_origins=['*'],
     allow_credentials=True,
     allow_methods=['*'],
-    alloow_headers=['*'],
+    allow_headers=['*'],
 )
 
 #Endpoints da Api
@@ -121,7 +121,8 @@ def atualizar_evento_por_id(evento_id: int, evento: EventoUpdate, db: Session = 
         raise HTTPException(status_code=404, detail='Evento não encontrado')
     return evento_atualizado
 
-@app.delete('/eventos/{evento_id}', satus_code=204)
+@app.delete('/eventos/{evento_id}', status_code=204)
 def deletar_evento_por_id(evento_id: int, db: Session = Depends(get_db)):
     if not deletar_evento(db, evento_id):
         raise HTTPException(status_code=404, detail='Evento não encontrado')
+    return None
